@@ -1,0 +1,32 @@
+[
+  {
+    "tuotenumero": "1001",
+    "nimi": "Langaton hiiri",
+    "hinta": 24.95,
+    "maara": 15
+  },
+  {
+    "tuotenumero": "1002",
+    "nimi": "Mekaaninen näppäimistö",
+    "hinta": 89.9,
+    "maara": 8
+  },
+  {
+    "tuotenumero": "1003",
+    "nimi": "USB-C -kaapeli 2m",
+    "hinta": 9.95,
+    "maara": 40
+  },
+  {
+    "tuotenumero": "1004",
+    "nimi": "27\" Pelinäyttö 144Hz",
+    "hinta": 249.0,
+    "maara": 5
+  },
+  {
+    "tuotenumero": "1005",
+    "nimi": "Melunvaimennuskuulokkeet",
+    "hinta": 149.5,
+    "maara": 12
+  }
+]

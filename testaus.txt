@@ -1,0 +1,76 @@
+TESTAUSRAPORTTI: VARASTONHALLINTAJÄRJESTELMÄ
+=====================================================
+
+1. Yleistiedot ja testausympäristö
+----------------------------------
+Ohjelma: Varastonhallintajärjestelmä (Python CLI)
+Tekijä: FAHAD11ABBAS
+Ympäristö: macOS / Terminal
+Python-versio: Python 3.13
+Käytetyt tiedostot:
+- tuote.py (Tuote-luokka, arvonlaskenta ja sanakirjamuunnokset)
+- main.py (pääohjelma, käyttöliittymävalikko, syötteiden validointi ja tiedostokäsittely)
+- varasto.json (tietojen pysyväistallennus JSON-muodossa)
+
+
+2. Testatut toiminnot ja tulokset
+---------------------------------
+
+Valinta 1: Näytä kaikki tuotteet
+- Testattu varaston tulostamista esimerkkidatalla (5 tuotetta).
+- Tuloste muodostaa siistin ja helppolukuisen taulukon, jossa näkyvät sarakkeet: Tunniste, Nimi, Hinta, Määrä ja Yhteensä.
+- Testattu myös tilannetta, jossa varasto on tyhjä: ohjelma ilmoittaa asianmukaisesti "Varasto on tyhjä" eikä aiheuta virheitä.
+
+Valinta 2: Lisää tuote
+- Onnistunut lisäys: Syötetty uusi tuotetunnus "2001", nimi "Web-kamera HD", hinta "49,90" ja määrä "10". Tuote lisättiin listaan ja tallennettiin heti tiedostoon varasto.json.
+- Duplikaattitunnisteen esto: Yritetty lisätä tuote jo olemassa olevalla tunnisteella "1002". Ohjelma ilmoitti virheestä: "Virhe: Tuotenumero '1002' on jo käytössä! Valitse toinen tunniste." ja pyysi uutta tunnistetta. Lisäyksen pystyi myös peruuttamaan 'p'-valinnalla.
+- Tyhjän nimen esto: Yritetty painaa Enteriä nimen kohdalla. Ohjelma antoi ilmoituksen "Kenttä ei voi olla tyhjä! Yritä uudelleen."
+- Virheellinen hinta: Syötetty hinnan kohdalle tekstisyöte "abc" ja negatiivinen luku "-10". Ohjelma käsitteli ValueError-poikkeuksen ja ilmoitti "Luvun on oltava positiivinen (suurempi kuin 0)!". Lisäksi testattu suomalainen desimaalipilkku ("49,90"), jonka ohjelma muunsi automaattisesti pisteeksi ja hyväksyi kelvollisena lukuna.
+- Virheellinen määrä: Syötetty määräksi 0 ja negatiivinen arvo. Ohjelma ilmoitti "Luvun on oltava vähintään 1!" ja hyväksyi vain positiivisen kokonaisluvun.
+
+Valinta 3: Muuta tuotteen määrää
+- Onnistunut muutos: Valittu tuote "1001" (Langaton hiiri, aiempi määrä 15 kpl). Syötetty uudeksi määräksi 20. Ohjelma päivitti tiedon ja ilmoitti: "Tuotteen 'Langaton hiiri' määrä päivitetty: 15 -> 20 kpl." Tiedosto varasto.json päivittyi samalla.
+- Negatiivisen määrän esto: Syötetty uudeksi määräksi "-5". Ohjelma ilmoitti: "Luvun on oltava vähintään 0! Yritä uudelleen." Arvo 0 hyväksytään sallittuna varastosaldona (tuote tilapäisesti loppu).
+- Olematon tuote: Syötetty tuotenumero "9999". Ohjelma ilmoitti: "Virhe: Tuotetta tuotenumerolla '9999' ei löytynyt." ja palasi päävalikkoon kaatumatta.
+
+Valinta 4: Etsi tuote
+- Osumat nimen perusteella: Haettu hakusanalla "hiiri". Ohjelma löysi "Langaton hiiri" -tuotteen.
+- Kirjainkoosta riippumattomuus (case-insensitive): Testattu hakuja "HIIRI", "Hiiri" ja "hiiri". Kaikki haut palauttivat saman tuloksen.
+- Haku tuotenumerolla: Haettu "100" ja "1003", jolloin ohjelma listasi vastaavat tuotteet oikein.
+- Haku ilman osumia: Haettu sanalla "olematon". Ohjelma ilmoitti siististi "Hakusanalla 'olematon' ei löytynyt yhtään tuotetta."
+
+Valinta 5: Poista tuote
+- Varmistuskyselyn toiminta (k/e):
+  * Testi 1 (peruutus): Valittu tuote "2001" ja vastattu varmistuskysymykseen 'e'. Ohjelma tulosti "Poistaminen peruutettu." ja tuote säilyi varastossa.
+  * Testi 2 (vahvistus): Valittu tuote "2001" ja vastattu 'k'. Ohjelma poisti tuotteen ja ilmoitti "Tuote 'Web-kamera HD' on poistettu onnistuneesti varastosta." Muutos tallentui myös tiedostoon.
+- Olematon tuote: Haettu tuotetta "9999", jolloin ohjelma ilmoitti virheestä eikä ryhtynyt poistoon.
+
+Valinta 6: Näytä varaston arvo
+- Testattu varaston arvon laskentaa viidellä esimerkkituotteella:
+  * 1001: 15 kpl * 24.95 € = 374.25 €
+  * 1002: 8 kpl * 89.90 € = 719.20 €
+  * 1003: 40 kpl * 9.95 € = 398.00 €
+  * 1004: 5 kpl * 249.00 € = 1245.00 €
+  * 1005: 12 kpl * 149.50 € = 1794.00 €
+  * Yhteensä: 4530.45 € ja 80 kpl tuotteita viidestä eri nimikkeestä.
+- Ohjelman tulostama yhteenveto vastasi täsmällisesti laskettua arvoa (4530.45 €).
+
+Valinta 0: Lopeta
+- Ohjelma tallentaa tiedot vielä kerran varotoimenpiteenä tiedostoon, tulostaa lopputervehdyksen ja sulkeutuu hallitusti.
+
+
+3. Virhetilanteiden käsittely ja poikkeustestit
+-----------------------------------------------
+1. Syötepoikkeukset (try-except):
+   - Kaikki käyttäjän syötteet luetaan suojattujen apufunktioiden kautta (pyyda_merkkijono, pyyda_liukuluku, pyyda_kokonaisluku).
+   - Mikäli käyttäjä syöttää kirjaimia lukua vaativaan kenttään, ValueError otetaan kiinni, käyttäjälle näytetään opastava ilmoitus ja syötettä pyydetään uudelleen. Ohjelma ei koskaan kaadu traceback-virheeseen.
+   - Päätekeskeytys (Ctrl+C / KeyboardInterrupt ja Ctrl+D / EOFError): Näitä varten on lisätty käsittelijät, joiden ansiosta ohjelma keskeyttää toiminnon tai sulkeutuu siististi ilman virhelokia.
+
+2. Tiedostopoikkeukset:
+   - Puuttuva tiedosto: Jos varasto.json puuttuu, funktio lataa_varasto palauttaa tyhjän listan ilman kaatumista ja tiedosto luodaan automaattisesti ensimmäisen tallennuksen yhteydessä.
+   - Viallinen JSON-tiedosto: Mikäli tiedosto on korruptoitunut (esim. vajaa JSON), json.JSONDecodeError otetaan kiinni, käyttäjälle näytetään varoitus ja ohjelma käynnistyy tyhjällä varastolla.
+
+
+4. Yhteenveto
+-------------
+Kaikki määrittelyssä vaaditut ominaisuudet toimivat odotetusti ja luotettavasti. Ohjelmakoodi noudattaa hyviä Python-käytäntöjä, modulaarista rakennetta ja tarkkaa poikkeustenkäsittelyä. Käyttöliittymä on täysin suomenkielinen ja selkeä.
